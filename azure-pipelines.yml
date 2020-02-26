@@ -4,7 +4,7 @@ stages:
     variables:
       - group: 'Terraform'
       - name: tfstatename
-        value: 'bootstrapped.tfstate'
+        value: 'k8s.tfstate'
       - name: location
         value: 'westeurope'
   
@@ -31,4 +31,3 @@ stages:
       - script: terraform apply -auto-approve
         workingDirectory: ./env
         displayName: 'Terraform apply'
-  © 2020 GitHub, Inc.

@@ -1,17 +1,17 @@
-# azurerm provider is defined in the folder above with the a subscription and tenant selected, with a service princials ID and secret
+# azurerm provider and azuread provider are defined in the folder above with the a subscription and tenant selected, with a service princials ID and secret
 # when running 'terraform apply' on the k8s-cluster directory you need to first run 'az login' for terraform to run under your user. 
-# Terraform will automatically get the lastest azurerm provider on 'Terraform Init'
-# If the version is above 1.5 and something fails, uncomment this code below when running locally
+# Terraform will automatically get the lastest providers on 'Terraform Init'
+# If the version is above 1.5 and 0.7 and something fails, uncomment this code below when running locally
 
 /*
 provider "azurerm" {
     version = "~>1.5"
 }
-*/
 
 provider "azuread" {
   version = "~>0.7.0"
 }
+*/
 
 provider "random" {
   version = "~> 2.2"
