@@ -1,0 +1,5 @@
+subscription-id="#{subscriptionid}#"
+client-id="#{clientid}#"
+client-secret="#{clientsecret}#"
+tenant-id="#{tenantid}#"
+location="#{location}#"

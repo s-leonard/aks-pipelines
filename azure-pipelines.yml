@@ -1,0 +1,34 @@
+stages:
+
+  - stage: ProvisionEnvironment
+    variables:
+      - group: 'Terraform'
+      - name: tfstatename
+        value: 'bootstrapped.tfstate'
+      - name: location
+        value: 'westeurope'
+  
+    jobs:
+    - job: TransformConfiguration
+      pool:      
+        vmImage: 'Ubuntu-16.04'
+      steps:
+      - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+        displayName: 'Replace tokens in **/*.tfvars'
+        inputs:
+          rootDirectory: ./env
+          targetFiles: '**/*.tfvars'
+          
+      - script: |
+          terraform init \
+            -backend-config="resource_group_name=$(resourcegroup)" \
+            -backend-config="storage_account_name=$(storageaccount)" \
+            -backend-config="container_name=$(containername)" \
+            -backend-config="key=$(tfstatename)" \
+            -backend-config="access_key=$(accesskey)"
+        workingDirectory: ./env
+        displayName: 'Terraform init'
+      - script: terraform apply -auto-approve
+        workingDirectory: ./env
+        displayName: 'Terraform apply'
+  © 2020 GitHub, Inc.

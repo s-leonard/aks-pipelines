@@ -1,19 +1,19 @@
 
 
-resource "azurerm_log_analytics_workspace" "test" {
+resource "azurerm_log_analytics_workspace" "k8s" {
     # The WorkSpace name has to be unique across the whole of azure, not just the current subscription/tenant.
-    name                = "${var.log_analytics_workspace_name}-${random_id.k8s.dec}"
+    name                = "law-${var.resource_group_name}-${random_id.k8s.dec}"
     location            = var.log_analytics_workspace_location
     resource_group_name = azurerm_resource_group.k8s.name
     sku                 = var.log_analytics_workspace_sku
 }
 
-resource "azurerm_log_analytics_solution" "test" {
+resource "azurerm_log_analytics_solution" "k8s" {
     solution_name         = "ContainerInsights"
-    location              = azurerm_log_analytics_workspace.test.location
+    location              = azurerm_log_analytics_workspace.k8s.location
     resource_group_name   = azurerm_resource_group.k8s.name
-    workspace_resource_id = azurerm_log_analytics_workspace.test.id
-    workspace_name        = azurerm_log_analytics_workspace.test.name
+    workspace_resource_id = azurerm_log_analytics_workspace.k8s.id
+    workspace_name        = azurerm_log_analytics_workspace.k8s.name
 
     plan {
         publisher = "Microsoft"
@@ -27,10 +27,10 @@ resource "tls_private_key" "k8s" {
 }
 
 resource "azurerm_kubernetes_cluster" "k8s" {
-    name                = var.cluster_name
+    name                = "cluster-${var.resource_group_name}-${random_id.k8s.dec}"
     location            = azurerm_resource_group.k8s.location
     resource_group_name = azurerm_resource_group.k8s.name
-    dns_prefix          = var.dns_prefix
+    dns_prefix          = "cluster-${var.resource_group_name}-${random_id.k8s.dec}"
 
     linux_profile {
         admin_username = "ubuntu"
@@ -54,7 +54,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
     addon_profile {
         oms_agent {
         enabled                    = true
-        log_analytics_workspace_id = azurerm_log_analytics_workspace.test.id
+        log_analytics_workspace_id = azurerm_log_analytics_workspace.k8s.id
         }
     }
 
