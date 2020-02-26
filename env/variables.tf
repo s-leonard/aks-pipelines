@@ -1,3 +1,5 @@
+
+
 variable "subscription-id" {}
 
 variable "client-id" {}
