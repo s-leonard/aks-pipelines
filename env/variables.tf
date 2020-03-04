@@ -4,13 +4,6 @@ variable "azure_subscription_client_id" {}
 variable "azure_subscription_client_secret" {}
 variable "azure_tenant_id" {}
 
-# variables for terraform azurerm backend
-variable "tf_backend_resource_group" {}
-variable "tf_backend_storage_account" {}
-variable "tf_backend_container_name" {}
-variable "tf_backend_state_file_name" {}
-variable "tf_backend_state_file_key" {}
-
 # K8S Variables
 variable resource_group_name {
     default = "aks"

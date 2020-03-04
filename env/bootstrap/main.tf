@@ -55,6 +55,9 @@ resource "azuread_service_principal" "lab" {
 }
 
 resource "random_string" "lab" {
+  keepers = {
+    resource_group = "azurerm_resource_group.lab.name"
+  }
   length  = "32"
   special = true
 }
@@ -119,6 +122,12 @@ resource "azurerm_storage_container" "lab" {
 
 # Add Terraform azuread and azurerm provider settings to vault
 
+resource "azurerm_key_vault_secret" "subscription-id" {
+    name = "azure-subscription-id"
+    value = data.azurerm_client_config.lab.subscription_id
+    key_vault_id = azurerm_key_vault.lab.id
+}
+
 resource "azurerm_key_vault_secret" "client-id" {
     name = "azure-subscription-client-id"
     value = azuread_application.lab.application_id
@@ -131,11 +140,7 @@ resource "azurerm_key_vault_secret" "client-secret" {
     key_vault_id = azurerm_key_vault.lab.id
 }
 
-resource "azurerm_key_vault_secret" "subscription-id" {
-    name = "azure-subscription-id"
-    value = data.azurerm_client_config.lab.subscription_id
-    key_vault_id = azurerm_key_vault.lab.id
-}
+
 
 resource "azurerm_key_vault_secret" "tenant-id" {
     name = "azure-tenant-id"

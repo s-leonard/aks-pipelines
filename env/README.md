@@ -39,9 +39,9 @@ az group create --name $rg_name --location $rg_loc --subscription $sub
 
 az storage account create --name "${rg_name}storage" --subscription $sub --resource-group $rg_name --location $rg_loc --sku Standard_ZRS --encryption-services blob
 
-## this bit isnt working
+## Create Container
 sa_key=$(az storage account keys list --account-name "${rg_name}storage" --query [0].value --output tsv)
- az storage container create --name statefiles --subscription $sub --account-name "${rg_name}storage" --account-key "isPMRtuJmR0BDLydP/2MNkGIprpPmVoBjEIAOpnU7lQRme5QGByABHodzoxRexhOPoU1o2wUt65O6abk/ancXA==" --auth-mode key --public-access off 
+
 az storage container create --name statefiles --subscription $sub --account-name "${rg_name}storage" --auth-mode login --public-access off 
  
 az keyvault create --location $rg_loc --name tfvault${random} --resource-group $rg_name --subscription $sub

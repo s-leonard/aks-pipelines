@@ -15,6 +15,8 @@ provider "azuread" {
   client_secret   = var.azure_subscription_client_secret
   tenant_id       = var.azure_tenant_id
 }
+
+
 # When running in a pipeline the terraform state fil is stored in Azure not locally. 
 # azure-pipelines.yml file sets the storage account details on terraform init 
 terraform {

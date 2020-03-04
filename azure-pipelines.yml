@@ -26,9 +26,10 @@ stages:
         workingDirectory: ./env
         displayName: 'Terraform init'
   
-      - script: terraform apply -auto-approve
+      - script: terraform apply -auto-approve -var-file="terraform.tfvars"
+      
         workingDirectory: ./env
         displayName: 'Terraform apply'
 
 
-        
+  
