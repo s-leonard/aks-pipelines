@@ -60,11 +60,11 @@ echo "azure_subscription_id=\"${sub}\"" >>local/terraform.tfvars
 echo "azure_subscription_client_id=\"${sp_client}\"" >>local/terraform.tfvars
 echo "azure_subscription_client_secret=\"${sp_psw}\"" >>local/terraform.tfvars
 echo "azure_tenant_id=\"${ad_tenant}\"" >>local/terraform.tfvars
-echo "resource_group_name=\"${rg_name}\"" >>local/backend.tf
-echo "storage_account_name=\"${rg_name}storage\"" >>local/backend.tf
-echo "container_name=\"statefiles\"" >>local/backend.tf
-echo "access_key=\"$sa_key\"" >>local/backend.tf
-echo "key=\"${appname}${environment}statefile.tfstate\"" >>local/backend.tf
+echo "resource_group_name=\"${rg_name}\"" >>local/backend2.tf
+echo "storage_account_name=\"${rg_name}storage\"" >>local/backend2.tf
+echo "container_name=\"statefiles\"" >>local/backend2.tf
+echo "access_key=\"$sa_key\"" >>local/backend2.tf
+echo "key=\"${appname}${environment}statefile.tfstate\"" >>local/backend2.tf
 
 
 echo  ****************************************

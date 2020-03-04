@@ -3,10 +3,6 @@ stages:
   - stage: ProvisionEnvironment
     variables:
       - group: 'Terraform'
-      - name: tfstatename
-        value: 'k8s.tfstate'
-      - name: location
-        value: 'westeurope'
   
     jobs:
     - job: TransformConfiguration
@@ -26,10 +22,13 @@ stages:
             -backend-config="container_name=$(tf-backend-container-name)" \
             -backend-config="key=$(tf-backend-state-file-name)" \
             -backend-config="access_key=$(tf-backend-state-file-key)"
+    
         workingDirectory: ./env
         displayName: 'Terraform init'
+  
       - script: terraform apply -auto-approve
         workingDirectory: ./env
         displayName: 'Terraform apply'
 
 
+        
