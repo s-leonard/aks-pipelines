@@ -19,11 +19,7 @@ provider "azuread" {
 # azure-pipelines.yml file sets the storage account details on terraform init 
 terraform {
    backend "azurerm" {
-      resource_group_name = var.tf_backend_resource_group
-      storage_account_name = var.tf_backend_storage_account
-      container_name = var.tf_backend_container_name
-      key = var.tf_backend_state_file_name
-      access_key = var.tf_backend_state_file_key
+    
    }
 }
 

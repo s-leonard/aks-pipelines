@@ -21,13 +21,15 @@ stages:
           
       - script: |
           terraform init \
-            -backend-config="resource_group_name=$(resourcegroup)" \
-            -backend-config="storage_account_name=$(storageaccount)" \
-            -backend-config="container_name=$(containername)" \
-            -backend-config="key=$(tfstatename)" \
-            -backend-config="access_key=$(accesskey)"
+            -backend-config="resource_group_name=$(tf-backend-resource-group)" \
+            -backend-config="storage_account_name=$(tf-backend-storage-account)" \
+            -backend-config="container_name=$(tf-backend-container-name)" \
+            -backend-config="key=$(tf-backend-state-file-name)" \
+            -backend-config="access_key=$(tf-backend-state-file-key)"
         workingDirectory: ./env
         displayName: 'Terraform init'
       - script: terraform apply -auto-approve
         workingDirectory: ./env
         displayName: 'Terraform apply'
+
+

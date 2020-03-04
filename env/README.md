@@ -56,15 +56,43 @@ az keyvault secret set --name azure-backend-container-name --vault-name tfvault$
 az keyvault secret set --name azure-backend-state-file-key --vault-name tfvault${random} --value sa_key
 az keyvault secret set --name tf-backend-state-file-name --vault-name tfvault${random} --value ${appname}${environment}statefile.tfstate
 
+echo "azure_subscription_id=\"${sub}\"" >>local/terraform.tfvars
+echo "azure_subscription_client_id=\"${sp_client}\"" >>local/terraform.tfvars
+echo "azure_subscription_client_secret=\"${sp_psw}\"" >>local/terraform.tfvars
+echo "azure_tenant_id=\"${ad_tenant}\"" >>local/terraform.tfvars
+echo "resource_group_name=\"${rg_name}\"" >>local/backend2.tf
+echo "storage_account_name=\"${rg_name}storage\"" >>local/backend2.tf
+echo "container_name=\"statefiles\"" >>local/backend2.tf
+echo "access_key=\"$sa_key\"" >>local/backend2.tf
+echo "key=\"${appname}${environment}statefile.tfstate\"" >>local/backend2.tf
 
-azure_backend_resource_group="#{azure-backend-resource-group}#"
-azure_backend_storage_account="#{azure-backend-storage-account}#"
-azure_backend_container_name="#{azure-backend-container-name}#"
-azure_backend_state_file_name="#{azure-backend-state-file-name}#"
-azure_backend_state_file_key="#{azure-backend-state-file-key}#"
- 
-# Output used when creating Kubernetes secret.
-echo "Service principal client ID: $sp_client"
-echo "Service principal password: $sp_psw"
-echo "Active Directory Tenant: $ad_tenant"
-echo "Storage Account Key:  $sa_key"
+
+echo  ****************************************
+echo  A keyvault called tfvault${random} has been created in resource group ${rg_name}. 
+echo  When using Azure DevOps, create a variable group linked to this keyvault and add all the secrets 
+echo  If running locally a file called local.${appname}${environment}.tfvars has been created
+echo  ****************************************
+
+
+
+
+
+terraform init \
+    -backend-config="resource_group_name=tfdemodevc28e" \
+    -backend-config="storage_account_name=tfdemodevc28estorage" \
+    -backend-config="container_name=statefiles" \
+    -backend-config="key=tfdemodevstatefile.tfstate" \
+    -backend-config="access_key=gIXhZYVKEkm6FjyobHK482OA3FFRTNSK1MmjI54HurIMb2NZZ3+ZkJBdtuKblPHjFuPvzpbKarKEIWAjUsbr5A=="
+
+terraform init \
+    -backend-config="resource_group_name=tfdemodevc28e" \
+    -backend-config="storage_account_name=test9876123" \
+    -backend-config="container_name=statefiles" \
+    -backend-config="key=tfdemodevstatefile.tfstate" \
+    -backend-config="access_key=g4q2uNRujhd7cT3proY1KsMCsEJjNXb7H8rrF0BTvhE36ZXMl6SlXyi0hMX+SPJ5+KiqF23IDRxNH9mbG8bTyw=="
+
+
+
+
+terraform init -backend-config="local/backend.tf" 
+

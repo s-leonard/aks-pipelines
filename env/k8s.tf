@@ -1,5 +1,5 @@
 
-
+/*
 resource "azurerm_log_analytics_workspace" "k8s" {
     # The WorkSpace name has to be unique across the whole of azure, not just the current subscription/tenant.
     name                = "law-${var.resource_group_name}-${random_id.k8s.dec}"
@@ -62,3 +62,5 @@ resource "azurerm_kubernetes_cluster" "k8s" {
         Environment = "Development"
     }
 }
+
+*/
