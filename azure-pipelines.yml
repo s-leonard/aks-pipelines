@@ -1,6 +1,24 @@
+
+variables:
+  websiteManifestName: 'websitemanifest'
+
 stages:
 
+  - stage: Build
+    displayName: Build stage
+    
+    jobs:
+    - job: Publish Build Artifacts
+      pool:      
+        vmImage: 'Ubuntu-16.04'
+    steps:
+      - task: PublishPipelineArtifact@0
+      inputs:
+        artifactName: $(websiteManifestName)
+        targetPath: /devops/website 
+
   - stage: ProvisionEnvironment
+    displayName: Provision Env with Terraform
     variables:
       - group: 'Terraform'
   
@@ -15,6 +33,10 @@ stages:
           rootDirectory: ./env
           targetFiles: '**/*.tfvars'
           
+          targetFiles: |
+            **/*.tfvars
+            $(System.ArtifactsDirectory)/$(websiteManifestName)/*
+
       - script: |
           terraform init \
             -backend-config="resource_group_name=$(tf-backend-resource-group)" \
@@ -30,6 +52,13 @@ stages:
       
         workingDirectory: ./env
         displayName: 'Terraform apply'
+
+      - script: |
+          echo "$(terraform output kube_config)\"" >> .kubeconfig
+          kubectl create namespace uat --kubeconfig .kubeconfig
+        
+        workingDirectory: ./env
+        displayName: 'kubectl apply - allowed'
 
 
   

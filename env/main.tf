@@ -19,11 +19,13 @@ provider "azuread" {
 
 # When running in a pipeline the terraform state fil is stored in Azure not locally. 
 # azure-pipelines.yml file sets the storage account details on terraform init 
+
 terraform {
-   backend "azurerm" {
+ backend "azurerm" {
     
    }
 }
+
 
 
 

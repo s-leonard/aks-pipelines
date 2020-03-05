@@ -1,4 +1,4 @@
-/*
+
 resource "azuread_application" "k8s" {
   name                       = "${var.resource_group_name}${random_id.k8s.dec}"
   homepage                   = "https://homepage${random_id.k8s.dec}"
@@ -38,4 +38,3 @@ resource "azurerm_role_assignment" "aksmonitor" {
   principal_id       = azuread_service_principal.k8s.id
 }
 
-*/

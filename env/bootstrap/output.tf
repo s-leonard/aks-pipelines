@@ -1,3 +1,7 @@
+output "azure_subscription_service_principal_object_id" {
+    value = azuread_service_principal.lab.object_id 
+}
+
 output "azure_subscription_id" {
     value = data.azurerm_client_config.lab.subscription_id
 }
@@ -33,4 +37,5 @@ output "access_key" {
 output "key" {
     value = "${var.app_name}${var.env_name}.tfstate"
 }
+
 

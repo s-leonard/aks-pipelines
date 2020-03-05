@@ -31,7 +31,5 @@ bash extract_kube_config.sh
 ## Accessing the Kubernetes cluster
 
 ```
-kubectl create namespace dev --kubeconfig .kubeconfig
-kubectl create namespace prod --kubeconfig .kubeconfig
 kubectl get nodes --kubeconfig .kubeconfig
 ```
