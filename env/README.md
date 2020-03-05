@@ -32,6 +32,7 @@ bash extract_kube_config.sh
 
 ```
 kubectl create namespace dev --kubeconfig .kubeconfig
-kubectl create namespace prod --kubeconfig .kubeconfig
+kubectl create namespace uat --kubeconfig .kubeconfig
+kubectl create namespace preprod --kubeconfig .kubeconfig
 kubectl get nodes --kubeconfig .kubeconfig
 ```
