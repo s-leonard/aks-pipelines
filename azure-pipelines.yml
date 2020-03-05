@@ -1,6 +1,7 @@
 
 variables:
   websiteManifestName: 'websitemanifest'
+  kubeconfigArtifactName: 'kubeconfig'
 
 stages:
 
@@ -8,17 +9,18 @@ stages:
     displayName: Build stage
     
     jobs:
-    - job: Publish Build Artifacts
+    - job: PublishBuildArtifacts
       pool:      
         vmImage: 'Ubuntu-16.04'
-    steps:
+      steps:
       - task: PublishPipelineArtifact@0
-      inputs:
-        artifactName: $(websiteManifestName)
-        targetPath: /devops/website 
-
+        inputs:
+          artifactName: $(websiteManifestName)
+          targetPath: 'devops/website'
+      
   - stage: ProvisionEnvironment
     displayName: Provision Env with Terraform
+    dependsOn: Build
     variables:
       - group: 'Terraform'
   
@@ -30,12 +32,9 @@ stages:
       - task: qetza.replacetokens.replacetokens-task.replacetokens@3
         displayName: 'Replace tokens in **/*.tfvars'
         inputs:
-          rootDirectory: ./env
+          rootDirectory: ./env         
           targetFiles: '**/*.tfvars'
-          
-          targetFiles: |
-            **/*.tfvars
-            $(System.ArtifactsDirectory)/$(websiteManifestName)/*
+
 
       - script: |
           terraform init \
@@ -55,10 +54,75 @@ stages:
 
       - script: |
           echo "$(terraform output kube_config)\"" >> .kubeconfig
-          kubectl create namespace uat --kubeconfig .kubeconfig
+          kubectl get nodes --kubeconfig .kubeconfig
         
         workingDirectory: ./env
-        displayName: 'kubectl apply - allowed'
+        displayName: 'kubectl check nodes'
+
+      - task: PublishPipelineArtifact@0
+        inputs:
+          artifactName: $(kubeconfigArtifactName)
+          targetPath: 'env/.kubeconfig'
+
+  - stage: DeployToDev
+    displayName: Deploy to Dev
+    dependsOn: ProvisionEnvironment
+    variables:
+      theme: 'default'
+    jobs:
+    - job: TransformConfiguration
+      pool:      
+        vmImage: 'Ubuntu-16.04'
+      steps:
+      - task: DownloadPipelineArtifact@1
+        inputs:
+          artifactName: '$(websiteManifestName)'
+          downloadPath: '$(System.ArtifactsDirectory)/$(websiteManifestName)'
+
+      - task: DownloadPipelineArtifact@1
+        inputs:
+          artifactName: '$(kubeconfigArtifactName)'
+          downloadPath: '$(System.ArtifactsDirectory)/$(kubeconfigArtifactName)'
+
+      - task: replacetokens@3
+        inputs:
+          targetFiles: '$(System.ArtifactsDirectory)/$(websiteManifestName)/*'
+
+      - script: |
+          kubectl apply -f $(System.ArtifactsDirectory)/$(websiteManifestName)/deployment-website.yaml -n uat --kubeconfig $(System.ArtifactsDirectory)/$(kubeconfigArtifactName)/.kubeconfig
+
+        workingDirectory: ./env
+        displayName: 'Deploy Website'
+
+  - stage: DeployToUAT
+    displayName: Deploy to UAT
+    dependsOn: DeployToDev
+    variables:
+      theme: 'red'
+    jobs:
+    - job: TransformConfiguration
+      pool:      
+        vmImage: 'Ubuntu-16.04'
+      steps:
+      - task: DownloadPipelineArtifact@1
+        inputs:
+          artifactName: '$(websiteManifestName)'
+          downloadPath: '$(System.ArtifactsDirectory)/$(websiteManifestName)'
+
+      - task: DownloadPipelineArtifact@1
+        inputs:
+          artifactName: '$(kubeconfigArtifactName)'
+          downloadPath: '$(System.ArtifactsDirectory)/$(kubeconfigArtifactName)'
+
+      - task: replacetokens@3
+        inputs:
+          targetFiles: '$(System.ArtifactsDirectory)/$(websiteManifestName)/*'
+
+      - script: |
+          kubectl apply -f $(System.ArtifactsDirectory)/$(websiteManifestName)/deployment-website.yaml -n uat --kubeconfig $(System.ArtifactsDirectory)/$(kubeconfigArtifactName)/.kubeconfig
+
+        workingDirectory: ./env
+        displayName: 'Deploy Website'
 
 
   

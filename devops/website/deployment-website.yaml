@@ -12,7 +12,7 @@ data:
         "Name": "middle-api"
       },
       "App": {
-        "Theme":  "blue"
+        "Theme":  "#{theme}#"
       }
     }
 ---
